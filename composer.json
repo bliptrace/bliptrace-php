@@ -1,0 +1,44 @@
+{
+    "name": "g8scope/php",
+    "version": "1.0.0",
+    "description": "Runtime PHP SDK for g8scope \u2014 build, scrub and ship error envelopes to the ingest API. Framework-agnostic; framework SDKs (g8scope/laravel) extend this.",
+    "keywords": [
+        "g8scope",
+        "error-tracking",
+        "observability",
+        "sdk",
+        "php"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.0",
+        "laravel/pint": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "G8Scope\\Php\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "G8Scope\\Php\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/pest",
+        "lint": "vendor/bin/pint"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
