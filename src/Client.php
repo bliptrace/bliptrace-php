@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace G8Scope\Php;
 
 use G8Scope\Php\Transport\CurlTransport;
+use G8Scope\Php\Transport\RetryPolicy;
 use G8Scope\Php\Transport\Transport;
 use Throwable;
 
@@ -24,7 +25,7 @@ final class Client
         ?Transport $transport = null,
         ?Scrubber $scrubber = null,
     ) {
-        $this->transport = $transport ?? new CurlTransport;
+        $this->transport = $transport ?? new CurlTransport(RetryPolicy::fromConfig($config));
         $this->scrubber = $scrubber ?? new Scrubber($config->scrubKeys);
     }
 

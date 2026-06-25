@@ -25,6 +25,9 @@ final class Config
         public readonly bool $enabled = true,
         public readonly string $sdkName = 'g8scope-php',
         public readonly string $sdkVersion = '1.0.0',
+        public readonly int $maxRetries = 2,
+        public readonly int $retryBaseMs = 100,
+        public readonly int $retryCapMs = 2000,
     ) {}
 
     /** @param array<string,mixed> $c */
@@ -44,6 +47,9 @@ final class Config
             enabled: (bool) ($c['enabled'] ?? true),
             sdkName: $c['sdk_name'] ?? 'g8scope-php',
             sdkVersion: $c['sdk_version'] ?? '1.0.0',
+            maxRetries: (int) ($c['max_retries'] ?? 2),
+            retryBaseMs: (int) ($c['retry_base_ms'] ?? 100),
+            retryCapMs: (int) ($c['retry_cap_ms'] ?? 2000),
         );
     }
 }
