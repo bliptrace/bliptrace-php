@@ -55,7 +55,7 @@ final class Client
             }
 
             return Envelope::build($e, $this->config, $this->scrubber->scrub($context));
-        } catch (\Throwable) {
+        } catch (Throwable) {
             return null; // never break the app
         }
     }

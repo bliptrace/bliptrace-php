@@ -31,8 +31,26 @@ final class Envelope
                 'message' => self::limit((string) $e->getMessage(), $config->maxMessage),
                 'frames' => self::frames($e, $config),
             ],
-            'context' => $context ?: ['custom' => []],
+            'context' => self::context($context),
         ];
+    }
+
+    /**
+     * Normalise context so empty map fields encode as JSON objects, not arrays —
+     * an empty PHP array becomes `[]` in JSON, but the schema wants `{}`.
+     *
+     * @param  array<string,mixed>  $context
+     * @return array<string,mixed>
+     */
+    private static function context(array $context): array
+    {
+        $context['custom'] = empty($context['custom']) ? (object) [] : $context['custom'];
+
+        if (isset($context['request']['headers']) && $context['request']['headers'] === []) {
+            $context['request']['headers'] = (object) [];
+        }
+
+        return $context;
     }
 
     /** @return array<int,array<string,mixed>> */
@@ -71,8 +89,8 @@ final class Envelope
     private static function uuid4(): string
     {
         $d = random_bytes(16);
-        $d[6] = chr((ord($d[6]) & 0x0f) | 0x40);
-        $d[8] = chr((ord($d[8]) & 0x3f) | 0x80);
+        $d[6] = chr((ord($d[6]) & 0x0F) | 0x40);
+        $d[8] = chr((ord($d[8]) & 0x3F) | 0x80);
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($d), 4));
     }
