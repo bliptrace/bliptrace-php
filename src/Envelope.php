@@ -18,7 +18,7 @@ final class Envelope
     public static function build(Throwable $e, Config $config, array $context = []): array
     {
         return [
-            'schema_version' => '1.0',
+            'schema_version' => '1.1',
             'event_id' => self::uuid4(),
             'occurred_at' => (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d\TH:i:s.v\Z'),
             'runtime' => ['name' => 'php', 'version' => PHP_VERSION],
@@ -26,13 +26,41 @@ final class Envelope
             'environment' => $config->environment,
             'release' => $config->release,
             'level' => $e instanceof \Error ? 'fatal' : 'error',
-            'exception' => [
-                'type' => $e::class,
-                'message' => self::limit((string) $e->getMessage(), $config->maxMessage),
-                'frames' => self::frames($e, $config),
-            ],
+            'exception' => self::exception($e, $config),
             'context' => self::context($context),
         ];
+    }
+
+    /**
+     * The exception block, including the chained-cause chain (envelope 1.1).
+     *
+     * @return array<string,mixed>
+     */
+    private static function exception(Throwable $e, Config $config): array
+    {
+        $exception = [
+            'type' => $e::class,
+            'message' => self::limit((string) $e->getMessage(), $config->maxMessage),
+            'frames' => self::frames($e, $config),
+        ];
+
+        $previous = [];
+        $cause = $e->getPrevious();
+        $depth = 0;
+        while ($cause !== null && $depth < 5) {
+            $previous[] = [
+                'type' => $cause::class,
+                'message' => self::limit((string) $cause->getMessage(), $config->maxMessage),
+            ];
+            $cause = $cause->getPrevious();
+            $depth++;
+        }
+
+        if ($previous !== []) {
+            $exception['previous'] = $previous;
+        }
+
+        return $exception;
     }
 
     /**
@@ -53,27 +81,80 @@ final class Envelope
         return $context;
     }
 
+    /** Source lines to capture either side of a frame's line (envelope 1.1 code context). */
+    private const CONTEXT_LINES = 5;
+
     /** @return array<int,array<string,mixed>> */
     private static function frames(Throwable $e, Config $config): array
     {
-        $frames = [[
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'function' => '__throw',
-            'in_app' => self::inApp($e->getFile(), $config->basePath),
-        ]];
+        $frames = [self::frame($e->getFile(), $e->getLine(), '__throw', $config)];
 
         foreach (array_slice($e->getTrace(), 0, $config->maxFrames) as $t) {
-            $file = $t['file'] ?? '[internal]';
-            $frames[] = [
-                'file' => $file,
-                'line' => $t['line'] ?? 0,
-                'function' => ($t['class'] ?? '').($t['type'] ?? '').($t['function'] ?? ''),
-                'in_app' => self::inApp($file, $config->basePath),
-            ];
+            $frames[] = self::frame(
+                $t['file'] ?? '[internal]',
+                (int) ($t['line'] ?? 0),
+                ($t['class'] ?? '').($t['type'] ?? '').($t['function'] ?? ''),
+                $config,
+            );
         }
 
         return array_slice($frames, 0, $config->maxFrames);
+    }
+
+    /** @return array<string,mixed> */
+    private static function frame(string $file, int $line, string $function, Config $config): array
+    {
+        $inApp = self::inApp($file, $config->basePath);
+
+        $frame = [
+            'file' => $file,
+            'line' => $line,
+            'function' => $function,
+            'in_app' => $inApp,
+        ];
+
+        // Code context for in-app frames only (bounds IO + avoids vendor noise).
+        if ($inApp && ($context = self::frameContext($file, $line)) !== null) {
+            $frame['context'] = $context;
+        }
+
+        return $frame;
+    }
+
+    /**
+     * Read the source lines surrounding a frame's line, for the issue-detail
+     * code-context view. Returns null when the file/line can't be read.
+     *
+     * @return array{pre:list<string>,line:string,post:list<string>}|null
+     */
+    private static function frameContext(string $file, int $line): ?array
+    {
+        if ($line < 1 || $file === '' || $file[0] === '[' || ! is_file($file) || ! is_readable($file)) {
+            return null;
+        }
+
+        $lines = @file($file, FILE_IGNORE_NEW_LINES);
+        if ($lines === false) {
+            return null;
+        }
+
+        $index = $line - 1;
+        if (! isset($lines[$index])) {
+            return null;
+        }
+
+        $pre = [];
+        for ($i = max(0, $index - self::CONTEXT_LINES); $i < $index; $i++) {
+            $pre[] = $lines[$i];
+        }
+
+        $post = [];
+        $last = min(count($lines) - 1, $index + self::CONTEXT_LINES);
+        for ($i = $index + 1; $i <= $last; $i++) {
+            $post[] = $lines[$i];
+        }
+
+        return ['pre' => $pre, 'line' => $lines[$index], 'post' => $post];
     }
 
     private static function inApp(string $file, string $basePath): bool
