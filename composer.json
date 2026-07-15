@@ -1,6 +1,5 @@
 {
     "name": "g8scope/php",
-    "version": "1.0.0",
     "description": "Runtime PHP SDK for g8scope \u2014 build, scrub and ship error envelopes to the ingest API. Framework-agnostic; framework SDKs (g8scope/laravel) extend this.",
     "keywords": [
         "g8scope",
