@@ -24,7 +24,7 @@ final class Config
         public readonly string $basePath = '',
         public readonly bool $enabled = true,
         public readonly string $sdkName = 'g8scope-php',
-        public readonly string $sdkVersion = '1.1.0',
+        public readonly string $sdkVersion = '1.2.0',
         public readonly int $maxRetries = 2,
         public readonly int $retryBaseMs = 100,
         public readonly int $retryCapMs = 2000,
@@ -47,12 +47,50 @@ final class Config
             basePath: $c['base_path'] ?? '',
             enabled: (bool) ($c['enabled'] ?? true),
             sdkName: $c['sdk_name'] ?? 'g8scope-php',
-            sdkVersion: $c['sdk_version'] ?? '1.1.0',
+            sdkVersion: $c['sdk_version'] ?? '1.2.0',
             maxRetries: (int) ($c['max_retries'] ?? 2),
             retryBaseMs: (int) ($c['retry_base_ms'] ?? 100),
             retryCapMs: (int) ($c['retry_cap_ms'] ?? 2000),
             // Client-side sampling, clamped to 0.0–1.0 (1.0 = send every event).
             sampleRate: max(0.0, min(1.0, (float) ($c['sample_rate'] ?? 1.0))),
         );
+    }
+
+    /** fromArray() keys read from the environment, by env name suffix (see Env). */
+    public const ENV_KEYS = [
+        'KEY' => 'key',
+        'ENDPOINT' => 'endpoint',
+        'ENABLED' => 'enabled',
+        'ENVIRONMENT' => 'environment',
+        'RELEASE' => 'release',
+        'SAMPLE_RATE' => 'sample_rate',
+        'TIMEOUT' => 'timeout',
+        'MAX_RETRIES' => 'max_retries',
+        'RETRY_BASE_MS' => 'retry_base_ms',
+        'RETRY_CAP_MS' => 'retry_cap_ms',
+        'MAX_FRAMES' => 'max_frames',
+        'MAX_MESSAGE' => 'max_message',
+    ];
+
+    /**
+     * Build from BLIPTRACE_* env (falling back to the deprecated G8SCOPE_*).
+     * $c supplies defaults and non-env values (base_path, scrub_keys, ...);
+     * a set env var wins over $c.
+     *
+     * @param  array<string,mixed>  $c
+     */
+    public static function fromEnv(array $c = []): self
+    {
+        foreach (self::ENV_KEYS as $name => $key) {
+            $value = Env::get($name);
+            if ($value !== null) {
+                $c[$key] = $value;
+            }
+        }
+        if (isset($c['enabled']) && is_string($c['enabled'])) {
+            $c['enabled'] = filter_var($c['enabled'], FILTER_VALIDATE_BOOL);
+        }
+
+        return self::fromArray($c);
     }
 }
