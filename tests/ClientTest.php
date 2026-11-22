@@ -93,3 +93,24 @@ it('never throws even if context is weird', function (): void {
     $client = new Client(new Config(key: 'k'), $t);
     expect(fn () => $client->capture(new Exception('x'), ['a' => fn () => 1]))->not->toThrow(Throwable::class);
 });
+
+it('samples events client-side by sample rate', function (float $rate, int $min, int $max): void {
+    mt_srand(42);
+    $t = new FakeTransport;
+    $client = new Client(new Config(key: 'k', sampleRate: $rate), $t);
+    for ($i = 0; $i < 1000; $i++) {
+        $client->capture(new Exception('x'));
+    }
+    expect(count($t->sent))->toBeGreaterThanOrEqual($min)->toBeLessThanOrEqual($max);
+})->with([
+    'never' => [0.0, 0, 0],
+    'half' => [0.5, 400, 600],
+    'always' => [1.0, 1000, 1000],
+]);
+
+it('reads and clamps sample_rate from array config', function (): void {
+    expect(Config::fromArray([])->sampleRate)->toBe(1.0)
+        ->and(Config::fromArray(['sample_rate' => '0.25'])->sampleRate)->toBe(0.25)
+        ->and(Config::fromArray(['sample_rate' => 5])->sampleRate)->toBe(1.0)
+        ->and(Config::fromArray(['sample_rate' => -1])->sampleRate)->toBe(0.0);
+});

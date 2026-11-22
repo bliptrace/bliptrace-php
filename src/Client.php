@@ -51,7 +51,7 @@ final class Client
             if (! $this->config->enabled || ! $this->config->key) {
                 return null;
             }
-            if ($this->shouldIgnore($e)) {
+            if ($this->shouldIgnore($e) || ! $this->sampled()) {
                 return null;
             }
 
@@ -67,6 +67,14 @@ final class Client
         if ($this->config->key) {
             $this->transport->send($this->config->endpoint, $this->config->key, $envelope, $this->config->timeout);
         }
+    }
+
+    /** Per-event random sampling; the server samples again on its side. */
+    private function sampled(): bool
+    {
+        $rate = $this->config->sampleRate;
+
+        return $rate >= 1.0 || ($rate > 0.0 && mt_rand() / mt_getrandmax() < $rate);
     }
 
     private function shouldIgnore(Throwable $e): bool
