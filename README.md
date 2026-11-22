@@ -2,7 +2,7 @@
 
 Runtime PHP SDK for [g8scope](https://scope.g8suite.com) — build, scrub and ship error envelopes to
 the ingest API. **Framework-agnostic** (no Laravel/Symfony dependency). Framework SDKs like
-[`g8scope/laravel`](../g8scope-laravel) are thin adapters on top of this.
+[`g8scope/laravel`](../bliptrace-laravel) are thin adapters on top of this.
 
 ## Install
 
