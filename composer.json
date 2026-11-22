@@ -32,6 +32,11 @@
         "test": "vendor/bin/pest",
         "lint": "vendor/bin/pint"
     },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        }
+    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
