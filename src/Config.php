@@ -7,13 +7,16 @@ namespace G8Scope\Php;
 /** Immutable SDK configuration. Framework adapters build this from their config. */
 final class Config
 {
+    public const DEFAULT_ENDPOINT = 'https://ingest.bliptrace.com/v1/ingest';
+
     /**
      * @param  array<int,string>  $ignoreExceptions
      * @param  array<int,string>  $scrubKeys
+     * @param  array<string,string>  $tags
      */
     public function __construct(
         public readonly ?string $key,
-        public readonly string $endpoint = 'https://ingest.scope.g8suite.com',
+        public readonly string $endpoint = self::DEFAULT_ENDPOINT,
         public readonly string $environment = 'production',
         public readonly ?string $release = null,
         public readonly int $timeout = 3,
@@ -24,11 +27,13 @@ final class Config
         public readonly string $basePath = '',
         public readonly bool $enabled = true,
         public readonly string $sdkName = 'g8scope-php',
-        public readonly string $sdkVersion = '1.2.0',
+        public readonly string $sdkVersion = '1.3.0',
         public readonly int $maxRetries = 2,
         public readonly int $retryBaseMs = 100,
         public readonly int $retryCapMs = 2000,
         public readonly float $sampleRate = 1.0,
+        public readonly int $maxBreadcrumbs = 50,
+        public readonly array $tags = [],
     ) {}
 
     /** @param array<string,mixed> $c */
@@ -36,7 +41,7 @@ final class Config
     {
         return new self(
             key: $c['key'] ?? null,
-            endpoint: $c['endpoint'] ?? 'https://ingest.scope.g8suite.com',
+            endpoint: $c['endpoint'] ?? self::DEFAULT_ENDPOINT,
             environment: $c['environment'] ?? 'production',
             release: $c['release'] ?? null,
             timeout: (int) ($c['timeout'] ?? 3),
@@ -47,12 +52,14 @@ final class Config
             basePath: $c['base_path'] ?? '',
             enabled: (bool) ($c['enabled'] ?? true),
             sdkName: $c['sdk_name'] ?? 'g8scope-php',
-            sdkVersion: $c['sdk_version'] ?? '1.2.0',
+            sdkVersion: $c['sdk_version'] ?? '1.3.0',
             maxRetries: (int) ($c['max_retries'] ?? 2),
             retryBaseMs: (int) ($c['retry_base_ms'] ?? 100),
             retryCapMs: (int) ($c['retry_cap_ms'] ?? 2000),
             // Client-side sampling, clamped to 0.0–1.0 (1.0 = send every event).
             sampleRate: max(0.0, min(1.0, (float) ($c['sample_rate'] ?? 1.0))),
+            maxBreadcrumbs: max(0, (int) ($c['max_breadcrumbs'] ?? 50)),
+            tags: $c['tags'] ?? [],
         );
     }
 
@@ -70,6 +77,7 @@ final class Config
         'RETRY_CAP_MS' => 'retry_cap_ms',
         'MAX_FRAMES' => 'max_frames',
         'MAX_MESSAGE' => 'max_message',
+        'MAX_BREADCRUMBS' => 'max_breadcrumbs',
     ];
 
     /**

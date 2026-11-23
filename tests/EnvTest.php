@@ -68,8 +68,8 @@ it('falls back to the built-in defaults when no env var is set', function (): vo
     $c = Config::fromEnv();
 
     expect($c->key)->toBeNull()
-        ->and($c->endpoint)->toBe('https://ingest.scope.g8suite.com')
+        ->and($c->endpoint)->toBe('https://ingest.bliptrace.com/v1/ingest')
         ->and($c->enabled)->toBeTrue()
         ->and($c->timeout)->toBe(3)
-        ->and($c->sdkVersion)->toBe('1.2.0');
+        ->and($c->sdkVersion)->toBe('1.3.0');
 });

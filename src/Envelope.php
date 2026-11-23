@@ -11,16 +11,20 @@ use Throwable;
 /** Builds the language-neutral g8scope error envelope from a Throwable. */
 final class Envelope
 {
+    /** Envelope / breadcrumb `level` enum. */
+    public const LEVELS = ['debug', 'info', 'warning', 'error', 'fatal'];
+
     /**
      * @param  array<string,mixed>  $context  Already-scrubbed context (request/user/custom).
+     * @param  array{breadcrumbs?:list<array<string,mixed>>,tags?:array<string,string>,trace?:array<string,string>}  $scope  Already-scrubbed; empty keys are omitted.
      * @return array<string,mixed>
      */
-    public static function build(Throwable $e, Config $config, array $context = []): array
+    public static function build(Throwable $e, Config $config, array $context = [], array $scope = []): array
     {
-        return [
+        $envelope = [
             'schema_version' => '1.1',
             'event_id' => self::uuid4(),
-            'occurred_at' => (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d\TH:i:s.v\Z'),
+            'occurred_at' => self::timestamp(),
             'runtime' => ['name' => 'php', 'version' => PHP_VERSION],
             'sdk' => ['name' => $config->sdkName, 'version' => $config->sdkVersion],
             'environment' => $config->environment,
@@ -29,6 +33,20 @@ final class Envelope
             'exception' => self::exception($e, $config),
             'context' => self::context($context),
         ];
+
+        foreach (['breadcrumbs', 'tags', 'trace'] as $key) {
+            if (! empty($scope[$key])) {
+                $envelope[$key] = $scope[$key];
+            }
+        }
+
+        return $envelope;
+    }
+
+    /** RFC 3339 UTC timestamp with milliseconds, as used for occurred_at and breadcrumbs. */
+    public static function timestamp(): string
+    {
+        return (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d\TH:i:s.v\Z');
     }
 
     /**

@@ -11,10 +11,18 @@ class CurlTransport implements Transport
         private readonly RetryPolicy $policy = new RetryPolicy,
     ) {}
 
+    /** Accept the full ingest URL (1.3 default) or a bare base URL (pre-1.3 style). */
+    public static function url(string $endpoint): string
+    {
+        $url = rtrim($endpoint, '/');
+
+        return str_ends_with($url, '/v1/ingest') ? $url : $url.'/v1/ingest';
+    }
+
     public function send(string $endpoint, string $key, array $envelope, int $timeout): void
     {
         try {
-            $url = rtrim($endpoint, '/').'/v1/ingest';
+            $url = self::url($endpoint);
             $body = json_encode($envelope, JSON_UNESCAPED_SLASHES);
             if ($body === false) {
                 return;
