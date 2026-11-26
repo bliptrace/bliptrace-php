@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use G8Scope\Php\Config;
-use G8Scope\Php\Transport\RetryPolicy;
+use Bliptrace\Php\Config;
+use Bliptrace\Php\Transport\RetryPolicy;
 
 it('retries transport errors, 408, 429 and 5xx, but not success or other 4xx', function (int $status, bool $expected): void {
     $policy = new RetryPolicy(maxRetries: 5);

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php;
+namespace Bliptrace\Php;
 
-use G8Scope\Php\Transport\CurlTransport;
-use G8Scope\Php\Transport\RetryPolicy;
-use G8Scope\Php\Transport\Transport;
+use Bliptrace\Php\Transport\CurlTransport;
+use Bliptrace\Php\Transport\RetryPolicy;
+use Bliptrace\Php\Transport\Transport;
 use Throwable;
 
 /**

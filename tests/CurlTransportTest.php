@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use G8Scope\Php\Transport\CurlTransport;
-use G8Scope\Php\Transport\RetryPolicy;
+use Bliptrace\Php\Transport\CurlTransport;
+use Bliptrace\Php\Transport\RetryPolicy;
 
 /**
  * Test double: scripts a sequence of [status, retryAfter] responses instead of

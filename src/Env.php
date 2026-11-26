@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php;
+namespace Bliptrace\Php;
 
 /**
  * Reads SDK environment variables: BLIPTRACE_<NAME> first, then the deprecated
- * G8SCOPE_<NAME> (removed in 2.0). Looks in $_ENV, $_SERVER, then getenv() so
+ * G8SCOPE_<NAME> (removed in 3.0). Looks in $_ENV, $_SERVER, then getenv() so
  * dotenv loaders that skip putenv() still work.
  */
 final class Env
 {
     public const PREFIX = 'BLIPTRACE_';
 
-    /** @deprecated since 1.2, removed in 2.0 — use BLIPTRACE_*. */
+    /** @deprecated since 1.2, removed in 3.0 — use BLIPTRACE_*. */
     public const LEGACY_PREFIX = 'G8SCOPE_';
 
     /** Value of BLIPTRACE_<name>, else G8SCOPE_<name>, else $default. */

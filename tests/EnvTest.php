@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use G8Scope\Php\Config;
-use G8Scope\Php\Env;
+use Bliptrace\Php\Config;
+use Bliptrace\Php\Env;
 
 /** Set (string) or unset (null) an env var everywhere Env looks. */
 function setEnvVar(string $var, ?string $value): void
@@ -71,5 +71,5 @@ it('falls back to the built-in defaults when no env var is set', function (): vo
         ->and($c->endpoint)->toBe('https://ingest.bliptrace.com/v1/ingest')
         ->and($c->enabled)->toBeTrue()
         ->and($c->timeout)->toBe(3)
-        ->and($c->sdkVersion)->toBe('1.3.0');
+        ->and($c->sdkVersion)->toBe('2.0.0');
 });

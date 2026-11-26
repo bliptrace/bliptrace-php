@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
-use G8Scope\Php\Transport\Transport;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
+use Bliptrace\Php\Transport\Transport;
 
 final class FakeTransport implements Transport
 {
@@ -27,7 +27,7 @@ it('builds and ships a valid envelope', function (): void {
     expect($env['schema_version'])->toBe('1.1')
         ->and($env['event_id'])->toMatch('/^[0-9a-f-]{36}$/')
         ->and($env['runtime']['name'])->toBe('php')
-        ->and($env['sdk']['name'])->toBe('g8scope-php')
+        ->and($env['sdk']['name'])->toBe('bliptrace-php')
         ->and($env['level'])->toBe('error')
         ->and($env['exception']['type'])->toBe('RuntimeException')
         ->and($env['exception']['message'])->toBe('boom')

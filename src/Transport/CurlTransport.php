@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php\Transport;
+namespace Bliptrace\Php\Transport;
 
 /** Dependency-free transport using ext-curl. Guard-wrapped: never throws. */
 class CurlTransport implements Transport

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
-use G8Scope\Php\Traceparent;
-use G8Scope\Php\Transport\CurlTransport;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
+use Bliptrace\Php\Traceparent;
+use Bliptrace\Php\Transport\CurlTransport;
 
 function scopedClient(FakeTransport $t, array $config = []): Client
 {

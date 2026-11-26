@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php\Transport;
+namespace Bliptrace\Php\Transport;
 
+use Bliptrace\Php\Config;
 use Closure;
-use G8Scope\Php\Config;
 
 /**
  * Decides whether a failed ingest attempt should be retried, and how long to wait.

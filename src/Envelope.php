@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php;
+namespace Bliptrace\Php;
 
 use DateTimeImmutable;
 use DateTimeZone;
 use Throwable;
 
-/** Builds the language-neutral g8scope error envelope from a Throwable. */
+/** Builds the language-neutral Bliptrace error envelope from a Throwable. */
 final class Envelope
 {
     /** Envelope / breadcrumb `level` enum. */

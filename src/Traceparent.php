@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php;
+namespace Bliptrace\Php;
 
 /** Parses a W3C Trace Context `traceparent` header (version-traceid-parentid-flags). */
 final class Traceparent

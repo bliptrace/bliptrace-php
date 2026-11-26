@@ -5,8 +5,8 @@ declare(strict_types=1);
 // Plain PHP (no framework) — capture with the runtime SDK directly.
 require __DIR__.'/../vendor/autoload.php';
 
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
 
 // BLIPTRACE_KEY / BLIPTRACE_ENDPOINT (or the deprecated G8SCOPE_*) override these.
 $client = new Client(Config::fromEnv([

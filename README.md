@@ -15,8 +15,8 @@ composer require bliptrace/php
 ## Usage
 
 ```php
-use G8Scope\Php\Client;
-use G8Scope\Php\Config;
+use Bliptrace\Php\Client;
+use Bliptrace\Php\Config;
 
 $g8 = new Client(new Config(
     key: 'your-ingest-key',
@@ -61,7 +61,7 @@ $g8->setTags(['region' => 'my', 'shard' => 3]);
 // Trace: W3C ids for log <-> trace correlation.
 $g8->setTrace($traceId, $spanId);                       // null clears
 $g8->setTraceparent($_SERVER['HTTP_TRACEPARENT'] ?? null); // false (no change) when malformed
-G8Scope\Php\Traceparent::parse($header);                 // ['trace_id' => ..., 'span_id' => ...] or null
+Bliptrace\Php\Traceparent::parse($header);                 // ['trace_id' => ..., 'span_id' => ...] or null
 ```
 
 | Envelope field | Source | Notes |
@@ -101,7 +101,7 @@ over the array; anything unset keeps the array value, then the built-in default.
 $g8 = new Client(Config::fromEnv(['base_path' => __DIR__, 'scrub_keys' => ['password']]));
 ```
 
-`G8Scope\Php\Env::get('KEY')` is the same lookup for adapters that read single values.
+`Bliptrace\Php\Env::get('KEY')` is the same lookup for adapters that read single values.
 
 > **Deprecated:** the old `G8SCOPE_*` names (e.g. `G8SCOPE_KEY`) are still read when the matching
 > `BLIPTRACE_*` variable is unset. This fallback will be removed in 2.0 — rename your variables.

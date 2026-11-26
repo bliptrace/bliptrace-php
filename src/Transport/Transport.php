@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php\Transport;
+namespace Bliptrace\Php\Transport;
 
 /** Ships an envelope to the ingest API. Implementations must never throw. */
 interface Transport

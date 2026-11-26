@@ -1,8 +1,8 @@
 {
     "name": "bliptrace/php",
-    "description": "Runtime PHP SDK for g8scope \u2014 build, scrub and ship error envelopes to the ingest API. Framework-agnostic; framework SDKs (bliptrace/laravel) extend this.",
+    "description": "Runtime PHP SDK for Bliptrace \u2014 build, scrub and ship error envelopes to the ingest API. Framework-agnostic; framework SDKs (bliptrace/laravel) extend this.",
     "keywords": [
-        "g8scope",
+        "bliptrace",
         "error-tracking",
         "observability",
         "sdk",
@@ -20,12 +20,15 @@
     },
     "autoload": {
         "psr-4": {
-            "G8Scope\\Php\\": "src/"
-        }
+            "Bliptrace\\Php\\": "src/"
+        },
+        "files": [
+            "src/legacy-aliases.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
-            "G8Scope\\Php\\Tests\\": "tests/"
+            "Bliptrace\\Php\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -34,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.x-dev"
+            "dev-main": "2.x-dev"
         }
     },
     "config": {

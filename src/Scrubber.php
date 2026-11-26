@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace G8Scope\Php;
+namespace Bliptrace\Php;
 
 /** Client-side PII scrub: redact sensitive keys before sending. */
 final class Scrubber
